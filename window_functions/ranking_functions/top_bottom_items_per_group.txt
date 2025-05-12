@@ -1,0 +1,66 @@
+------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+Q1. Top 3 Customers by Monthly Spending
+Table: transactions(customer_id, amount, transaction_date)
+
+Task: For each month, find the top 3 customers based on total spending.
+
+solution #1 
+------------
+with cte as (
+select customer_id , date_trunc('month',transaction_date) as Month , sum(amount) as total_amount
+from customers
+group by customer_id , date_trunc('month',transaction_date)
+),
+rank_cte as (
+select Month , customer_id , total_amount,
+      rank() over(PARTITION by Month order by total_amount desc) as rn 
+from cte )
+select *
+from rank_cte
+where rn <=3 
+
+solution #2 
+------------
+
+select *
+from 
+(select customer_id , 
+       date_trunc('month',transaction_date) as Month,
+       sum(amount) as total_amount,
+       rank() over (partition by date_trunc('month',transaction_date)
+       order by SUM(amount) DESC ) as rnk 
+from customers
+group by customer_id , date_trunc('month',transaction_date))  as ranked
+where rnk <=3 
+------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
+Q2. Second Most Popular Product per Region
+Table: sales(region, product_id, total_sales)
+Task: For each region, find the product(s) with the second highest total sales.
+
+select region , product_id , total_sales
+from (
+select region , product_id , 
+       DENSE_RANK() over (partition by region order by total_sales desc) as rn 
+form sales ) ranked
+where rn = 2 
+
+------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
+Q3 . 
+Top 2 Rated Movies per Genre (Ignore Duplicates)
+Table: movies(movie_id, title, genre, rating)
+
+SELECT title, genre, rating
+FROM (
+  SELECT title, genre, rating, ROW_NUMBER() OVER (PARTITION BY genre ORDER BY rating DESC) AS rank
+  FROM (
+    SELECT DISTINCT title, genre, rating
+    FROM movies
+  ) AS deduplicated_movies
+) AS ranked_movies
+WHERE rank <= 2;
+
+
+

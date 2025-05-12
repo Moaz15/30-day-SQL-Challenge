@@ -1,0 +1,42 @@
+Window functions perform calculations across a set of table rows that are somehow related to the current row.
+Unlike aggregate functions (e.g., SUM(), AVG()), window functions do not collapse rows — 
+they retain all rows and provide additional computed columns.
+They are used with the OVER() clause, which defines the window (i.e., the range of rows) 
+the function should operate on.
+
+<function_name>(expression) OVER (
+    PARTITION BY column1
+    ORDER BY column2
+    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+)
+
+1. Ranking Functions 
+
+| Function       | Description                                 |
+| -------------- | ------------------------------------------- |
+| `ROW_NUMBER()` | Unique sequential number to each row        |
+| `RANK()`       | Same rank for ties, with gaps               |
+| `DENSE_RANK()` | Same rank for ties, no gaps                 |
+| `NTILE(n)`     | Divides rows into `n` roughly equal buckets |
+
+
+2. 📈 Value Functions
+
+| Function        | Description                    |
+| --------------- | ------------------------------ |
+| `LAG()`         | Gets value from a previous row |
+| `LEAD()`        | Gets value from a next row     |
+| `FIRST_VALUE()` | First value in window frame    |
+| `LAST_VALUE()`  | Last value in window frame     |
+| `NTH_VALUE(n)`  | N-th value in the window       |
+
+
+3. 🧮 Aggregate Functions as Window Functions
+
+| Function          | Description                  |
+| ----------------- | ---------------------------- |
+| `SUM()`           | Running or partitioned total |
+| `AVG()`           | Average within the window    |
+| `MIN()` / `MAX()` | Min/Max in the window        |
+| `COUNT()`         | Row count in the window      |
+
